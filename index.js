@@ -12,6 +12,8 @@ app.use(express.json())
 const product = require("./routes/pdf")
 app.use("/", product)
 
+const test = require("./routes/test")
+app.use("/", test)
 
 app.get("/", async (req, res) => {
     return res.json({listen : "server run on AWS EC2 instance"})
