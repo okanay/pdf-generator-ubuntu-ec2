@@ -1,25 +1,30 @@
 const router = require("express").Router();
-const axios = require('axios');
+const axios = require("axios");
 
-const EC2_URL = "http://16.171.146.195:8080/pdf";
-const LOCAL_URL = "http://localhost:8080/pdf";
+const URL =
+  "http://ec2-16-171-146-195.eu-north-1.compute.amazonaws.com:8080/pdf";
+// const URL = "http://localhost:8080/pdf";
 
 router.get("/test", async (req, res) => {
-    try {
-        const response = await axios.get(LOCAL_URL, {
-            responseType: 'arraybuffer',
-            headers: {
-                Accept: 'application/pdf'
-            }
-        });
+  try {
+    const response = await axios.get(URL, {
+      responseType: "arraybuffer",
+      headers: {
+        Accept: "application/pdf",
+        "x-pdf-url": "https://www.nextdok.dev/docs/description",
+        "x-access-token": "my-secret-token",
+      },
+    });
 
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename=downloaded.pdf');
-        res.send(response.data);
-    } catch (error) {
-        console.error("Hata: ", error);
-        res.status(500).send("Sunucuda bir hata oluştu");
-    }
+    await res.setHeader("Content-Type", "application/pdf");
+    await res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=downloaded.pdf",
+    );
+    await res.send(response.data);
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
 });
 
 module.exports = router;
