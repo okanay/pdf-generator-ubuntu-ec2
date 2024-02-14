@@ -1,0 +1,55 @@
+# Bağımlılıklar
+/node_modules
+
+# Yapılandırma dosyaları
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Yapım/derleme dosyaları
+/dist
+/build
+/.next
+
+# Geliştirme araçları tarafından oluşturulan dosyalar
+.npm
+.npmrc
+.yarn
+.yarnrc
+.pnpm-store
+
+# IDE ve editörler için yapılandırma dosyaları
+.idea
+.vscode
+*.sublime-project
+*.sublime-workspace
+
+# OS tarafından oluşturulan dosyalar
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Diğer yaygın dışlanan dosyalar
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.seed
+*.pid.lock
+*.tgz
+*.zip
+*.gz
+*.bz2
+*.rar
+*.tar
+*.7z
+
+# Geçici dosyalar
+.tmp
+.temp
