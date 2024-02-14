@@ -6,6 +6,9 @@ const URL =
 // const URL = "http://localhost:8080/pdf";
 
 router.get("/test", async (req, res) => {
+  if (process.env.NODE_ENV === "production")
+    res.json({ message: "Not Allowed." });
+
   try {
     const response = await axios.get(URL, {
       responseType: "arraybuffer",
