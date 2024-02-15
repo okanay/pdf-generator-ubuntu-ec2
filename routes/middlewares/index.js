@@ -12,6 +12,8 @@ const middleware = (req, res, next) => {
   if (testPaths.includes(req.path)) {
     return testMiddleware(req, res, next);
   }
+
+  return next();
 };
 
 module.exports = middleware;

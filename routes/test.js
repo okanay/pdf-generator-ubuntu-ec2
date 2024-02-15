@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
       responseType: "arraybuffer",
       headers: {
         Accept: "application/pdf",
-        "x-pdf-url": "https://www.nextdok.dev/docs/description",
+        "x-pdf-url": "https://www.nextdok.dev/docs/title",
         "x-access-token": "my-secret-token",
       },
     });
