@@ -15,7 +15,10 @@ router.get("/", async (req, res) => {
         Accept: "application/pdf",
         "x-pdf-url":
           "https://resetyourself.com.tr/panel/pdf/summary/index.php?key=b3abdd1e-1503-6cc8-8c6e-4c32dea1f769",
-        "x-access-token": "my-secret-token",
+        "x-access-token": "7c73c3f9afc53cd4b5f2c34e7ad0dfce",
+        "x-size-format": "custom",
+        "x-width": "1000",
+        "x-height": "1000",
       },
     });
 

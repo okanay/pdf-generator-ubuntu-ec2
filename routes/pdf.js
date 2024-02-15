@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const puppeteer = require("puppeteer");
-const pdfHelper = require("../helper/get-target-url");
+const pdfHelper = require("../helper/get-pdf-options");
 
 router.get("/", async (req, res) => {
   const targetUrl = pdfHelper.getTargetUrl(req, res);
+  const pdfOptions = pdfHelper.getPdfOptions(req);
 
   let browser;
   let page;
@@ -23,8 +24,7 @@ router.get("/", async (req, res) => {
     await page.goto(targetUrl, { waitUntil: "networkidle0", timeout: 60000 });
 
     const pdf = await page.pdf({
-      width: 1000,
-      height: 1000,
+      ...pdfOptions,
       printBackground: true,
     });
 
