@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
-const URL = "http://localhost:8080/pdf";
+// const URL = "http://localhost:8080/pdf";
 
-// const ipAddress = process.env.IP_ADDRESS;
-// const URL = `http://${ipAddress}:8080/pdf`;
+const ipAddress = process.env.IP_ADDRESS;
+const URL = `http://${ipAddress}:8080/pdf`;
 
 router.get("/", async (req, res) => {
   try {
