@@ -1,25 +1,30 @@
-require("dotenv").config()
+require("dotenv").config();
+const port = process.env.PORT || 8080;
 
-const cors = require("cors")
+const morgan = require("morgan");
+const cors = require("cors");
 const express = require("express");
-
-const productionMode = process.env.PRODUCTION_MODE;
+const helmet = require("helmet");
 const app = express();
 
-app.use(cors())
-app.use(express.json())
+const middleware = require("./routes/middlewares");
+const pdfRoutes = require("./routes/pdf");
+const testRoutes = require("./routes/test");
 
-const product = require("./routes/pdf")
-app.use("/", product)
+app.use(cors());
+app.use(express.json());
+app.use(morgan("dev"));
+app.use(helmet());
 
-const test = require("./routes/test")
-app.use("/", test)
+app.use(middleware);
+
+app.use("/pdf", pdfRoutes);
+app.use("/test", testRoutes);
 
 app.get("/", async (req, res) => {
-    return res.json({listen : "server run on AWS EC2 instance"})
-})
+  return res.json({ listen: "Server is running on AWS EC2 instance" });
+});
 
-const port = process.env.PORT || 8080
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`)
-})
+  console.log(`Server is running on port ${port}`);
+});

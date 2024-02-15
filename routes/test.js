@@ -1,14 +1,13 @@
-const router = require("express").Router();
+const express = require("express");
+const router = express.Router();
 const axios = require("axios");
 
-const URL =
-  "http://ec2-16-171-146-195.eu-north-1.compute.amazonaws.com:8080/pdf";
 // const URL = "http://localhost:8080/pdf";
 
-router.get("/test", async (req, res) => {
-  if (process.env.NODE_ENV === "production")
-    res.json({ message: "Not Allowed." });
+const ipAddress = process.env.IP_ADDRESS;
+const URL = `http://${ipAddress}:8080/pdf`;
 
+router.get("/", async (req, res) => {
   try {
     const response = await axios.get(URL, {
       responseType: "arraybuffer",
