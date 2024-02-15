@@ -23,7 +23,8 @@ router.get("/", async (req, res) => {
     await page.goto(targetUrl, { waitUntil: "networkidle0", timeout: 60000 });
 
     const pdf = await page.pdf({
-      format: "A4",
+      width: 1000,
+      height: 1000,
       printBackground: true,
     });
 

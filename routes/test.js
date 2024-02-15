@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
-// const URL = "http://localhost:8080/pdf";
+const URL = "http://localhost:8080/pdf";
 
-const ipAddress = process.env.IP_ADDRESS;
-const URL = `http://${ipAddress}:8080/pdf`;
+// const ipAddress = process.env.IP_ADDRESS;
+// const URL = `http://${ipAddress}:8080/pdf`;
 
 router.get("/", async (req, res) => {
   try {
@@ -13,7 +13,8 @@ router.get("/", async (req, res) => {
       responseType: "arraybuffer",
       headers: {
         Accept: "application/pdf",
-        "x-pdf-url": "https://www.nextdok.dev/docs/title",
+        "x-pdf-url":
+          "https://resetyourself.com.tr/panel/pdf/summary/index.php?key=b3abdd1e-1503-6cc8-8c6e-4c32dea1f769",
         "x-access-token": "my-secret-token",
       },
     });
