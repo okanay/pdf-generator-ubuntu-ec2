@@ -21,15 +21,6 @@ app.use(middleware);
 app.use("/pdf", pdfRoutes);
 app.use("/test", testRoutes);
 
-app.get(
-  "/.well-known/acme-challenge/iICIRySg2i6BGjY-xkK8Q9dhaUCxJCWC_NvT1bQ51pA:",
-  async (req, res) => {
-    return res.send(
-      "iICIRySg2i6BGjY-xkK8Q9dhaUCxJCWC_NvT1bQ51pA.5YXbZiUxwzg7KlG7gVWzZ7c8UgD0X2b3LsJ1T3xjVb8",
-    );
-  },
-);
-
 app.get("/", async (req, res) => {
   return res.json({ listen: "Server is running on AWS EC2 instance" });
 });
