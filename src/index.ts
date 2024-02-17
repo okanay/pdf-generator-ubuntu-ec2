@@ -13,10 +13,12 @@ app.use("*", cors());
 app.use("*", logger());
 
 app.route("/", pdfRoute);
-app.route("/", pdfTestRoute)
+app.route("/", pdfTestRoute);
 
 app.get("/", (c) => {
   return c.json({
+    system: "Bun System",
+    server: "Hono",
     status: "Everything is working well",
   });
 });
