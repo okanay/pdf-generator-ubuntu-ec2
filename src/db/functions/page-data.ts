@@ -8,7 +8,7 @@ const CreatePageDataInBackground = (pageName: string) => {
   db.insert(pageData)
     .values({
       pageName,
-      visitCount: 0,
+      visitCount: 1,
       lastVisitedTime: new Date(),
     })
     .returning()
@@ -26,28 +26,10 @@ const CreatePageDataInBackground = (pageName: string) => {
     });
 };
 
-const GetPageDataInBackground = (pageName: string) => {
-  console.log("Getting page data for", pageName);
-
-  db.select()
-    .from(pageData)
-    .where(eq(pageData.pageName, pageName))
-    .execute()
-    .then((page) => {
-      if (page.length === 0) {
-        console.log("No page data found for", pageName);
-      } else {
-        // console.log("Page data found for", pageName, page[0]);
-        return page[0];
-      }
-    })
-    .catch((err) => {
-      console.error("Error getting page data for", pageName, err);
-    });
-};
-
 const UpdatePageDataInBackground = (pageName: string) => {
   // console.log("Updating page data for", pageName);
+
+  if (process.env.PRODUCTION_MODE === "development") return;
 
   db.select()
     .from(pageData)
@@ -91,8 +73,4 @@ const UpdatePageDataInBackground = (pageName: string) => {
     });
 };
 
-export {
-  CreatePageDataInBackground,
-  GetPageDataInBackground,
-  UpdatePageDataInBackground,
-};
+export { CreatePageDataInBackground, UpdatePageDataInBackground };
