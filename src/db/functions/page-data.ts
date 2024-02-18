@@ -64,11 +64,7 @@ const UpdatePageDataInBackground = (pageName: string) => {
           timeZone: "Europe/Istanbul",
         });
 
-        const istanbulSetHour = new Date(istanbulTime).setHours(
-          new Date(istanbulTime).getHours() + 3,
-        );
-
-        const istanbulDate = new Date(istanbulSetHour);
+        const istanbulDate = new Date(istanbulTime);
 
         db.update(pageData)
           .set({
