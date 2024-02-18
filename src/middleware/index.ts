@@ -1,5 +1,7 @@
 import type { Next, Context } from "hono";
 
+import { UpdatePageDataInBackground } from "../db/functions/page-data.ts";
+
 const authorizeNeedPaths = ["/pdf"];
 
 const isAuthorized = (c: Context) => {
@@ -10,7 +12,9 @@ const isAuthorized = (c: Context) => {
 };
 
 const middleware = async (c: Context, next: Next) => {
-  if (authorizeNeedPaths.includes(c.req.path)) {
+  const path = c.req.path;
+
+  if (authorizeNeedPaths.includes(path)) {
     if (!isAuthorized(c)) {
       return c.json(
         {
@@ -20,6 +24,8 @@ const middleware = async (c: Context, next: Next) => {
       );
     }
   }
+
+  UpdatePageDataInBackground(path);
 
   await next();
 };

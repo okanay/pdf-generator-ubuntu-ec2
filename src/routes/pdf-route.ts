@@ -55,9 +55,9 @@ pdfRoute.get("/pdf", async (c) => {
     if (page) {
       await page.close();
     }
-    if (browser) {
-      await browser.close();
-    }
+    // if (browser) {
+    //   await browser.close();
+    // }
   }
 });
 

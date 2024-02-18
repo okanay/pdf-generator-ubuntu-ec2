@@ -24,6 +24,6 @@ app.get("/", (c) => {
 });
 
 export default {
-  port: process.env.PORT || 8081,
+  port: process.env.PORT || 8080,
   fetch: app.fetch,
 };
