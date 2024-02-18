@@ -4,7 +4,7 @@ import puppeteer from "puppeteer";
 
 const pdfRoute = new Hono();
 
-pdfRoute.get("/pdf", async (c) => {
+pdfRoute.get("/", async (c) => {
   const { targetUrl, options, isValid, errorMessages } = pdfValidation(c);
 
   if (!isValid) {
@@ -45,6 +45,8 @@ pdfRoute.get("/pdf", async (c) => {
 
     return c.body(pdf as any);
   } catch (error) {
+    console.log("pdf-route error : ", error);
+
     const errorMessage = "An error occurred while generating pdf";
 
     c.status(500);
@@ -55,9 +57,9 @@ pdfRoute.get("/pdf", async (c) => {
     if (page) {
       await page.close();
     }
-    // if (browser) {
-    //   await browser.close();
-    // }
+    if (browser) {
+      await browser.close();
+    }
   }
 });
 

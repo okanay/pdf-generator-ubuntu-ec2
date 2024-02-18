@@ -2,7 +2,7 @@ import { Hono } from "hono";
 
 const pdfTestRoute = new Hono();
 
-pdfTestRoute.get("/test", async (c) => {
+pdfTestRoute.get("/", async (c) => {
   try {
     const headers = {
       Accept: "application/pdf",

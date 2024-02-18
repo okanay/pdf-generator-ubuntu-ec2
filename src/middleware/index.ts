@@ -18,13 +18,15 @@ const middleware = async (c: Context, next: Next) => {
     if (!isAuthorized(c)) {
       return c.json(
         {
-          message: "Unauthorized custom",
+          message: "Unauthorized Customer!",
         },
         401,
       );
     }
   }
 
+  // This is a background job that will not block the request.
+  // It will update the page data in the database without waiting for the response.
   UpdatePageDataInBackground(path);
 
   await next();
