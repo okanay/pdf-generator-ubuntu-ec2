@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { secureHeaders } from "hono/secure-headers";
 
 import middleware from "./middleware";
 import pdfRoute from "./routes/pdf-route.ts";
@@ -8,12 +9,10 @@ import pdfTestRoute from "./routes/test-route.ts";
 
 const app = new Hono();
 
+app.use(secureHeaders({}));
 app.use(middleware);
 app.use("*", cors());
 app.use("*", logger());
-
-app.route("/pdf", pdfRoute);
-app.route("/test", pdfTestRoute);
 
 app.notFound((c) => {
   return c.text("404", 404);
@@ -24,7 +23,8 @@ app.onError((err, c) => {
   return c.text("Error", 500);
 });
 
-// test.
+app.route("/pdf", pdfRoute);
+app.route("/test", pdfTestRoute);
 
 app.get("/", (c) => {
   try {
