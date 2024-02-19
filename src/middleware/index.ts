@@ -1,18 +1,25 @@
 import type { Next, Context } from "hono";
 
 import { UpdatePageDataInBackground } from "../db/functions/page-data.ts";
-import checkAuth from "../security/check-auth.ts";
+import { isAuthorized } from "../security/check-auth.ts";
 
 const authorizeNeedPaths = ["/pdf"];
 
 const middleware = async (c: Context, next: Next) => {
-  checkAuth(c, authorizeNeedPaths);
-  UpdatePageDataInBackground(c.req.path);
+  const path = c.req.path;
 
-  if (c.req.path === "/pdf" || c.res.status === 200) {
-    console.log(c.res.status);
+  if (authorizeNeedPaths.includes(path)) {
+    if (!isAuthorized(c)) {
+      return c.json(
+        {
+          message: "Unauthorized Customer!",
+        },
+        401,
+      );
+    }
   }
 
+  UpdatePageDataInBackground(path);
   await next();
 };
 
