@@ -10,6 +10,8 @@ const middleware = async (c: Context, next: Next) => {
   const path = c.req.path;
 
   if (!serverPaths.includes(path)) {
+    UpdatePageDataInBackground("/not-found");
+
     return c.json(
       {
         path,
