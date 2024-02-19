@@ -1,16 +1,19 @@
-import { Hono } from "hono";
+import { Hono, type Next } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 
 import middleware from "./middleware";
+
 import pdfRoute from "./routes/pdf-route.ts";
 import pdfTestRoute from "./routes/test-route.ts";
+import { rateLimit } from "./security/rate-limit.ts";
 
 const app = new Hono();
 
 app.use(secureHeaders({}));
 app.use(middleware);
+app.use("/pdf", rateLimit);
 app.use("*", cors());
 app.use("*", logger());
 

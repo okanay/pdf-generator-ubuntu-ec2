@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { isValid, z } from "zod";
 
 import type { Context } from "hono";
 import type { PDFOptions } from "puppeteer";
@@ -14,7 +14,8 @@ const pdfOptionsSchema = z
     if (data.format === "custom" && (!data.width || !data.height)) {
       return ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "width and height are required for custom format",
+        message:
+          "x-width and x-height headers are required if x-size-format is custom",
         path: ["format"],
       });
     }
@@ -22,7 +23,8 @@ const pdfOptionsSchema = z
     if (!data.targetUrl || data.targetUrl.length === 0) {
       return ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "targetUrl is required",
+        message:
+          "x-pdf-url header is required for pdf generation, example: x-pdf-url: https://example.com",
         path: ["targetUrl"],
       });
     }
@@ -36,40 +38,36 @@ const pdfValidation = (c: Context) => {
     height: c.req.header("x-height"),
   };
 
-  try {
-    let options: PDFOptions = { printBackground: true };
-    const result = pdfOptionsSchema.parse(headers);
+  let options: PDFOptions = { printBackground: true };
+  const result = pdfOptionsSchema.safeParse(headers);
 
-    if (result.format === "a4") {
-      options.format = "a4";
-    } else if (result.format === "custom") {
-      options.width = result.width;
-      options.height = result.height;
-    }
-
-    return {
-      isValid: true,
-      options,
-      targetUrl: result.targetUrl,
-      errorMessages: undefined,
-    };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return {
-        isValid: false,
-        options: {},
-        targetUrl: headers.targetUrl,
-        errorMessages: error.errors.map((e) => e.message).join(", "),
-      };
-    }
-
+  if (!result.success)
     return {
       isValid: false,
-      options: {},
-      targetUrl: headers.targetUrl,
-      errorMessages: "An unexpected error occurred",
+      errorMessage: result.error.issues[0].message,
+      targetUrl: "",
+      options: options,
+      sendError: (c: Context) => {
+        c.status(400);
+        c.res.headers.set("x-error-message", result.error.issues[0].message);
+        return c.json({ message: result.error.issues[0].message });
+      },
     };
+
+  const { format, targetUrl, width, height } = result.data;
+
+  if (format === "a4") {
+    options.format = "a4";
+  } else if (format === "custom") {
+    options.width = width;
+    options.height = height;
   }
+
+  return {
+    options,
+    targetUrl: targetUrl,
+    isValid: true,
+  };
 };
 
 export default pdfValidation;

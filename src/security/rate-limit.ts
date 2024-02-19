@@ -1,29 +1,27 @@
-import { memoryStore } from "./memory-store.ts";
-import type { Context } from "hono";
+// rate-limit.ts
+import { store } from "./memory-store.ts";
+import type { Context, Next } from "hono";
 
-const rateLimit = (options: { windowMs: number; max: number }) => {
-  const { windowMs, max } = options;
-  const store = memoryStore(windowMs);
+export async function rateLimit(c: Context, next: Next) {
+  const key = "global"; // Örnek olarak global bir anahtar kullanıyoruz.
+  store.cleanup(); // Süresi dolmuş istekleri temizle
 
-  return async (c: Context, next: Function) => {
-    const key = c.req.header("x-forwarded-for") || "0.0.0.0";
-    const count = store.increment(key);
+  if (!store.add(key)) {
+    const rateLimit = Number(process.env.RATE_LIMIT) || 10;
+    const rateTimeLimit = Number(process.env.RATE_LIMIT_TIME_SECOND) || 10;
 
-    if (count > max) {
-      return c.json(
-        { error: "Too many requests, please try again in 20 seconds" },
-        429,
-      );
-    }
-
-    c.res.headers.set("X-RateLimit-Limit", max.toString());
+    c.status(429);
     c.res.headers.set(
-      "X-RateLimit-Remaining",
-      Math.max(0, max - count).toString(),
+      "x-error-message",
+      "Server can only handle " +
+        rateLimit +
+        " requests per " +
+        rateTimeLimit +
+        " seconds.",
     );
+    return c.text("Too Many Requests", 429);
+  }
 
-    await next();
-  };
-};
-
-export default rateLimit;
+  // Kapasite aşılmamışsa, sonraki middleware veya handler'ı çalıştır
+  return await next();
+}

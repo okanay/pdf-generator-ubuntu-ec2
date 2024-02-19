@@ -1,33 +1,17 @@
 import type { Next, Context } from "hono";
 
 import { UpdatePageDataInBackground } from "../db/functions/page-data.ts";
+import checkAuth from "../security/check-auth.ts";
 
 const authorizeNeedPaths = ["/pdf"];
 
-const isAuthorized = (c: Context) => {
-  const token = c.req.header("x-access-token") || "no-token";
-  const secretToken = process.env.SECRET_TOKEN || "no-secret-token";
-
-  return token === secretToken;
-};
-
 const middleware = async (c: Context, next: Next) => {
-  const path = c.req.path;
+  checkAuth(c, authorizeNeedPaths);
+  UpdatePageDataInBackground(c.req.path);
 
-  if (authorizeNeedPaths.includes(path)) {
-    if (!isAuthorized(c)) {
-      return c.json(
-        {
-          message: "Unauthorized Customer!",
-        },
-        401,
-      );
-    }
+  if (c.req.path === "/pdf" || c.res.status === 200) {
+    console.log(c.res.status);
   }
-
-  // This is a background job that will not block the request.
-  // It will update the page data in the database without waiting for the response.
-  UpdatePageDataInBackground(path);
 
   await next();
 };

@@ -2,7 +2,7 @@ import { Hono } from "hono";
 
 const pdfTestRoute = new Hono();
 
-pdfTestRoute.get("/", async (c) => {
+pdfTestRoute.get("", async (c) => {
   try {
     const headers = {
       Accept: "application/pdf",
@@ -23,7 +23,7 @@ pdfTestRoute.get("/", async (c) => {
       const status = response.status as any;
       const statusText = response.statusText;
       const errorMessage =
-        response.headers.get("error-messages") || "unknown error occurred";
+        response.headers.get("x-error-message") || "unknown error occurred";
 
       return c.json({ status, statusText, errorMessage }, status);
     }
