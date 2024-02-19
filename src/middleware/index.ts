@@ -19,7 +19,9 @@ const middleware = async (c: Context, next: Next) => {
     );
   }
 
-  UpdatePageDataInBackground(path);
+  if (c.req.method === "GET") {
+    UpdatePageDataInBackground(path);
+  }
 
   if (authorizeNeedPaths.includes(path)) {
     if (!isAuthorized(c)) {
