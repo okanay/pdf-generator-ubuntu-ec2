@@ -1,12 +1,11 @@
-import { Hono } from "hono";
-
-import pdfValidation from "../validation/pdf-validation";
 import puppeteer from "puppeteer";
+import { validPdfOptions } from "../validation/pdf/";
 
+import { Hono } from "hono";
 const pdfRoute = new Hono();
 
 pdfRoute.get("", async (c) => {
-  const { targetUrl, options, isValid, sendError } = pdfValidation(c);
+  const { targetUrl, options, isValid, sendError } = validPdfOptions(c);
   if (!isValid) return sendError!(c);
 
   let browser;
@@ -40,10 +39,11 @@ pdfRoute.get("", async (c) => {
 
     return c.body(pdf as any);
   } catch (error) {
-    console.log("pdf-route error : ", error);
     const errorMessage = "An error occurred while generating pdf";
-    c.status(500);
+
+    c.status(400);
     c.res.headers.set("x-error-message", errorMessage);
+
     return c.json({ message: errorMessage });
   } finally {
     if (page) {

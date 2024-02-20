@@ -1,33 +1,31 @@
-import { Hono, type Next } from "hono";
+import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 
-import middleware from "./middleware";
+import {
+  pageDataMiddleware,
+  authMiddleware,
+  notFoundMiddleware,
+} from "./middleware";
 
-import pdfRoute from "./routes/pdf-route.ts";
-import pdfTestRoute from "./routes/test-route.ts";
-import { rateLimit } from "./security/rate-limit.ts";
+import { pdfRoute, testRoute } from "./routes/";
+import { rateLimit } from "./utils/security/rate-limit.ts";
 
 const app = new Hono();
 
 app.use(secureHeaders({}));
-app.use(middleware);
-app.use("/pdf", rateLimit);
 app.use("*", cors());
 app.use("*", logger());
 
-app.notFound((c) => {
-  return c.text("404", 404);
-});
+app.use(notFoundMiddleware);
+app.use(pageDataMiddleware);
+app.use(authMiddleware);
 
-app.onError((err, c) => {
-  console.error(`${err}`);
-  return c.text("Error", 500);
-});
+app.use("/pdf", rateLimit);
 
 app.route("/pdf", pdfRoute);
-app.route("/test", pdfTestRoute);
+app.route("/test", testRoute);
 
 app.get("/", (c) => {
   try {

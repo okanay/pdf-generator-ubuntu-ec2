@@ -1,36 +1,8 @@
-import { isValid, z } from "zod";
-
+import pdfOptionsSchema from "./schema";
 import type { Context } from "hono";
 import type { PDFOptions } from "puppeteer";
 
-const pdfOptionsSchema = z
-  .object({
-    targetUrl: z.string().url({ message: "Invalid target URL" }).optional(),
-    format: z.enum(["a4", "custom"]),
-    width: z.string().optional(),
-    height: z.string().optional(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.format === "custom" && (!data.width || !data.height)) {
-      return ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message:
-          "x-width and x-height headers are required if x-size-format is custom",
-        path: ["format"],
-      });
-    }
-
-    if (!data.targetUrl || data.targetUrl.length === 0) {
-      return ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message:
-          "x-pdf-url header is required for pdf generation, example: x-pdf-url: https://example.com",
-        path: ["targetUrl"],
-      });
-    }
-  });
-
-const pdfValidation = (c: Context) => {
+const validPdfOptions = (c: Context) => {
   const headers = {
     targetUrl: c.req.header("x-pdf-url"),
     format: c.req.header("x-size-format") || "a4",
@@ -38,7 +10,7 @@ const pdfValidation = (c: Context) => {
     height: c.req.header("x-height"),
   };
 
-  let options: PDFOptions = { printBackground: true };
+  let options: PDFOptions = {};
   const result = pdfOptionsSchema.safeParse(headers);
 
   if (!result.success)
@@ -70,4 +42,4 @@ const pdfValidation = (c: Context) => {
   };
 };
 
-export default pdfValidation;
+export default validPdfOptions;
