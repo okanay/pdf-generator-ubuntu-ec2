@@ -26,10 +26,15 @@ pdfRoute.get("", async (c) => {
 
     await page.goto(targetUrl as string, {
       waitUntil: "networkidle0",
-      timeout: 30000,
+      referer: "https://www.google.com",
+      referrerPolicy: "no-referrer-when-downgrade",
+      timeout: 60000,
     });
 
-    const pdf = await page.pdf({ ...options });
+    const pdf = await page.pdf({
+      printBackground: true,
+      ...options,
+    });
 
     c.res.headers.set("Content-Type", "application/pdf");
     c.res.headers.set(

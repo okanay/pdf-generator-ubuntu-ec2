@@ -7,7 +7,7 @@ pdfTestRoute.get("", async (c) => {
     const headers = {
       Accept: "application/pdf",
       "x-pdf-url":
-        "https://resetyourself.com.tr/panel/pdf/summary/index.php?key=b3abdd1e-1503-6cc8-8c6e-4c32dea1f769",
+        "https://resetyourself.com.tr/panel/pdf/1/index.php?key=c37b52ac-13d3-9911-5df7-bcaaed81505b",
       "x-access-token": `${process.env.SECRET_TOKEN}`,
       "x-size-format": "custom",
       "x-width": "1000",
