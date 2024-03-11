@@ -2,6 +2,8 @@ import puppeteer from "puppeteer";
 import { validPdfOptions } from "../validation/pdf/";
 
 import { Hono } from "hono";
+import * as fs from "fs";
+import {exec} from "child_process";
 const pdfRoute = new Hono();
 
 pdfRoute.get("", async (c) => {
@@ -19,6 +21,10 @@ pdfRoute.get("", async (c) => {
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--single-process",
+        "--no-zygote",
+        "--disable-gpu",
+        "--disable-software-rasterizer",
+        "--disable-dev-shm-usage",
       ],
     });
 
@@ -26,8 +32,6 @@ pdfRoute.get("", async (c) => {
 
     await page.goto(targetUrl as string, {
       waitUntil: "networkidle0",
-      referer: "https://www.google.com",
-      referrerPolicy: "no-referrer-when-downgrade",
       timeout: 60000,
     });
 
@@ -36,13 +40,33 @@ pdfRoute.get("", async (c) => {
       ...options,
     });
 
+    const tempPdfPath = 'temp.pdf';
+    fs.writeFileSync(tempPdfPath, pdf);
+
+    const compressedPdfPath = 'compressed_output.pdf';
+    const gsCommand = `gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=${compressedPdfPath} ${tempPdfPath}`;
+
+    await new Promise<void>((resolve, reject) => {
+      exec(gsCommand, (error: Error | null, stdout: string, stderr: string) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          reject(error);
+          return;
+        }
+        console.log(`PDF sıkıştırıldı: ${compressedPdfPath}`);
+        resolve(stdout as any);
+      });
+    });
+
+    const compressedPdf = fs.readFileSync(compressedPdfPath);
+
     c.res.headers.set("Content-Type", "application/pdf");
     c.res.headers.set(
       "Content-Disposition",
       "attachment; filename=generated.pdf",
     );
 
-    return c.body(pdf as any);
+    return c.body(compressedPdf as any);
   } catch (error) {
     const errorMessage = "An error occurred while generating pdf";
 
