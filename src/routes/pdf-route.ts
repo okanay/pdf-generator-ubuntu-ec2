@@ -6,6 +6,13 @@ import * as fs from "fs";
 import {exec} from "child_process";
 const pdfRoute = new Hono();
 
+function delay(time : number) {
+  return new Promise(function(resolve) {
+    setTimeout(resolve, time);
+  });
+}
+
+
 pdfRoute.get("", async (c) => {
   const { targetUrl, options, isValid, sendError } = validPdfOptions(c);
   if (!isValid) return sendError!(c);
@@ -29,6 +36,7 @@ pdfRoute.get("", async (c) => {
     });
 
     page = await browser.newPage();
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36');
 
     await page.goto(targetUrl as string, {
       waitUntil: "networkidle0",
