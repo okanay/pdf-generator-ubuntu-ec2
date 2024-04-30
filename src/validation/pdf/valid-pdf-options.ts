@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import type { PDFOptions } from "puppeteer";
 
 const validPdfOptions = (c: Context) => {
+
   const headers = {
     targetUrl: c.req.header("x-pdf-url"),
     format: c.req.header("x-size-format") || "a4",
@@ -19,11 +20,6 @@ const validPdfOptions = (c: Context) => {
       errorMessage: result.error.issues[0].message,
       targetUrl: "",
       options: options,
-      sendError: (c: Context) => {
-        c.status(400);
-        c.res.headers.set("x-error-message", result.error.issues[0].message);
-        return c.json({ message: result.error.issues[0].message });
-      },
     };
 
   const { format, targetUrl, width, height } = result.data;

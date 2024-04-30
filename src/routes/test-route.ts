@@ -28,8 +28,9 @@ pdfTestRoute.get("", async (c) => {
       return c.json({ status, statusText, errorMessage }, status);
     }
 
+    const fileName = response.headers.get("Custom-File-Name");
     c.res.headers.set("Content-Type", "application/pdf");
-    c.res.headers.set("Content-Disposition", "attachment; filename=test.pdf");
+    c.res.headers.set("Content-Disposition", `attachment; filename=test-${fileName}.pdf`);
     return c.body(response.body);
   } catch (error) {
     return c.json({ error: "Something went wrong" }, 500);
