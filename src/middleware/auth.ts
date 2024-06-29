@@ -3,7 +3,7 @@ import { CheckAuth } from "../utils/security/check-auth.ts";
 
 const authorizeNeedPaths = ["/pdf"];
 
-const authMiddleware = async (c: Context, next: Next) => {
+const auth = async (c: Context, next: Next) => {
   if (authorizeNeedPaths.includes(c.req.path)) {
     const isAuthorized = await CheckAuth(c);
 
@@ -20,4 +20,4 @@ const authMiddleware = async (c: Context, next: Next) => {
   await next();
 };
 
-export default authMiddleware;
+export default auth;

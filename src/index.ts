@@ -3,14 +3,9 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 
-import {
-  pageDataMiddleware,
-  authMiddleware,
-  notFoundMiddleware,
-} from "./middleware";
+import { auth, notFound } from "./middleware";
 
-import { pdfRoute, testRoute } from "./routes/";
-import { rateLimit } from "./utils/security/rate-limit.ts";
+import { pdf, testRoute } from "./routes/";
 
 const app = new Hono();
 
@@ -18,13 +13,10 @@ app.use(secureHeaders({}));
 app.use("*", cors());
 app.use("*", logger());
 
-app.use(notFoundMiddleware);
-app.use(pageDataMiddleware);
-app.use(authMiddleware);
+app.use(notFound);
+app.use(auth);
 
-app.use("/pdf", rateLimit);
-
-app.route("/pdf", pdfRoute);
+app.route("/pdf", pdf);
 app.route("/test", testRoute);
 
 app.get("/", (c) => {

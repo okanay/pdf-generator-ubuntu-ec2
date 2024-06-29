@@ -1,4 +1,4 @@
-import pdfRoute from "./pdf-route.ts";
-import testRoute from "./test-route.ts";
+import pdf from "./pdf.ts";
+import testRoute from "./test.ts";
 
-export { pdfRoute, testRoute };
+export { pdf, testRoute };

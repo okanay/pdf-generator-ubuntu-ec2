@@ -3,6 +3,8 @@ import { Hono } from "hono";
 const pdfTestRoute = new Hono();
 
 pdfTestRoute.get("", async (c) => {
+  const PORT = process.env.PORT || 8080;
+
   try {
     const headers = {
       Accept: "application/pdf",
@@ -14,7 +16,7 @@ pdfTestRoute.get("", async (c) => {
       "x-height": "1000",
     };
 
-    const response = await fetch("http://localhost:8080/pdf", {
+    const response = await fetch(`http://localhost:${PORT}/pdf`, {
       method: "GET",
       headers,
     });
@@ -30,7 +32,10 @@ pdfTestRoute.get("", async (c) => {
 
     const fileName = response.headers.get("Custom-File-Name");
     c.res.headers.set("Content-Type", "application/pdf");
-    c.res.headers.set("Content-Disposition", `attachment; filename=test-${fileName}.pdf`);
+    c.res.headers.set(
+      "Content-Disposition",
+      `attachment; filename=test-${fileName}.pdf`,
+    );
     return c.body(response.body);
   } catch (error) {
     return c.json({ error: "Something went wrong" }, 500);

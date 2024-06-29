@@ -1,5 +1,4 @@
-import authMiddleware from "./auth-middleware.ts";
-import notFoundMiddleware from "./not-found-middleware.ts";
-import pageDataMiddleware from "./page-data-middleware.ts";
+import auth from "./auth.ts";
+import notFound from "./not-found.ts";
 
-export { authMiddleware, notFoundMiddleware, pageDataMiddleware };
+export { auth, notFound };
